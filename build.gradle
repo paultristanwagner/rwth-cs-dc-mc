@@ -28,3 +28,10 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+task deployPlugin {
+    copy {
+        from jar
+        into "testserver/plugins"
+    }
+}
