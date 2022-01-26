@@ -2,7 +2,7 @@
 
 ## Build and deploy the plugin
 The plugin can be build and deployed via gradle.  
-Learn, how to install gradle [here](https://gradle.org/install/).  
+Learn, how to install gradle [here](https://gradle.org/install/) or use the gradle wrapper with `./gradlew` instead of `gradle` for the following instructions.    
 
 `gradle jar`  
 Will build the plugin jar.  
