@@ -17,4 +17,8 @@ public class Plugin extends JavaPlugin {
     public void onDisable() {
         getLogger().info( "Plugin disabled." );
     }
+
+    public static Plugin getInstance() {
+        return JavaPlugin.getPlugin( Plugin.class );
+    }
 }
