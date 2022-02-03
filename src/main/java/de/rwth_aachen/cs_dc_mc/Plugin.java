@@ -1,7 +1,11 @@
 package de.rwth_aachen.cs_dc_mc;
 
+import de.rwth_aachen.cs_dc_mc.command.BankCommand;
 import de.rwth_aachen.cs_dc_mc.database.SQLDatabase;
 import de.rwth_aachen.cs_dc_mc.database.SQLiteDatabase;
+import de.rwth_aachen.cs_dc_mc.economy.Bank;
+import de.rwth_aachen.cs_dc_mc.economy.BankDAO;
+import de.rwth_aachen.cs_dc_mc.economy.SQLBankDAO;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +18,9 @@ import java.io.File;
 public class Plugin extends JavaPlugin {
 
     private SQLDatabase database;
+
+    private BankDAO bankDAO;
+    private Bank bank;
 
     @Override
     public void onEnable() {
@@ -40,6 +47,15 @@ public class Plugin extends JavaPlugin {
         }
         getLogger().info( "Successfully connected to database." );
 
+        // Setup bank
+        bankDAO = new SQLBankDAO( database );
+        bank = new Bank( bankDAO );
+        boolean success = bankDAO.setup();
+        if ( success ) {
+            getLogger().info( "Set up the bank." );
+        }
+
+        getCommand( "bank" ).setExecutor( new BankCommand() );
     }
 
     @Override
@@ -53,5 +69,13 @@ public class Plugin extends JavaPlugin {
 
     public static Plugin getInstance() {
         return JavaPlugin.getPlugin( Plugin.class );
+    }
+
+    public Bank getBank() {
+        return bank;
+    }
+
+    public BankDAO getBankDAO() {
+        return bankDAO;
     }
 }

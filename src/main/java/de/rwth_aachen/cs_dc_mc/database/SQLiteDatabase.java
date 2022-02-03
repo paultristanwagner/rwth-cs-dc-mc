@@ -22,12 +22,11 @@ public class SQLiteDatabase extends SQLDatabase {
 
         try {
             connection = DriverManager.getConnection( url, config.username(), config.password() );
+            return true;
         } catch ( SQLException e ) {
             e.printStackTrace();
             return false;
         }
-
-        return true;
     }
 
     @Override

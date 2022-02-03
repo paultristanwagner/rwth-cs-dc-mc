@@ -3,5 +3,9 @@ main: de.rwth_aachen.cs_dc_mc.Plugin
 version: 1.0
 api-version: 1.18
 
+commands:
+  bank:
+
+
 authors:
   - Paul Tristan Wagner

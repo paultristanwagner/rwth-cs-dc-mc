@@ -6,9 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>
@@ -17,7 +15,6 @@ import java.util.function.Consumer;
 public abstract class SQLDatabase {
 
     protected Connection connection;
-    protected ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
      * Tries to open a connection to a database.
@@ -28,7 +25,7 @@ public abstract class SQLDatabase {
     public abstract boolean connect( DatabaseConfiguration databaseConfiguration );
 
     public void disconnect() {
-        if(connection == null) {
+        if ( connection == null ) {
             return;
         }
 
@@ -64,8 +61,17 @@ public abstract class SQLDatabase {
         }
     }
 
-    public void executeAsync( PreparedStatement preparedStatement, Consumer<Boolean> success ) {
-        executorService.execute( () -> success.accept( execute( preparedStatement ) ) );
+    public int executeUpdate( PreparedStatement preparedStatement ) {
+        try {
+            return preparedStatement.executeUpdate();
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public CompletableFuture<Boolean> executeAsync( PreparedStatement preparedStatement ) {
+        return CompletableFuture.supplyAsync( () -> execute( preparedStatement ) );
     }
 
     public ResultSet query( PreparedStatement preparedStatement ) {
@@ -77,7 +83,7 @@ public abstract class SQLDatabase {
         }
     }
 
-    public void queryAsync(PreparedStatement preparedStatement, Consumer<ResultSet> consumer ) {
-        executorService.execute( () -> consumer.accept( query( preparedStatement ) ) );
+    public CompletableFuture<ResultSet> queryAsync( PreparedStatement preparedStatement ) {
+        return CompletableFuture.supplyAsync( () -> query( preparedStatement ) );
     }
 }
