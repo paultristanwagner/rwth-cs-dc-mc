@@ -31,7 +31,7 @@ test {
     useJUnitPlatform()
 }
 
-task deployPlugin(type: Copy) {
+task deployPlugin(type: Copy, dependsOn: jar) {
     from "build/libs/"
     into "testserver/plugins/"
 }

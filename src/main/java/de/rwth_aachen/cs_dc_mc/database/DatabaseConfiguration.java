@@ -1,4 +1,4 @@
-package de.rwth_aachen.cs_dc_mc;
+package de.rwth_aachen.cs_dc_mc.database;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>

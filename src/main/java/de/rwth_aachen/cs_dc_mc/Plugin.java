@@ -1,15 +1,17 @@
 package de.rwth_aachen.cs_dc_mc;
 
 import de.rwth_aachen.cs_dc_mc.command.BankCommand;
-import de.rwth_aachen.cs_dc_mc.database.SQLDatabase;
-import de.rwth_aachen.cs_dc_mc.database.SQLiteDatabase;
-import de.rwth_aachen.cs_dc_mc.economy.Bank;
-import de.rwth_aachen.cs_dc_mc.economy.BankDAO;
-import de.rwth_aachen.cs_dc_mc.economy.SQLBankDAO;
+import de.rwth_aachen.cs_dc_mc.command.MarketCommand;
+import de.rwth_aachen.cs_dc_mc.database.DatabaseConfiguration;
+import de.rwth_aachen.cs_dc_mc.database.SQLDataSource;
+import de.rwth_aachen.cs_dc_mc.database.SQLiteDataSource;
+import de.rwth_aachen.cs_dc_mc.economy.*;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Random;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>
@@ -17,10 +19,12 @@ import java.io.File;
  */
 public class Plugin extends JavaPlugin {
 
-    private SQLDatabase database;
+    private SQLDataSource dataSource;
 
     private BankDAO bankDAO;
     private Bank bank;
+
+    private MarketDAO marketDAO;
 
     @Override
     public void onEnable() {
@@ -37,33 +41,51 @@ public class Plugin extends JavaPlugin {
             }
         }
 
-        // Connect to database
-        database = new SQLiteDatabase();
+        // Initialize data source
+        dataSource = new SQLiteDataSource();
         DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration( "database" );
-        if ( !database.connect( databaseConfiguration ) ) {
-            getLogger().warning( "Could not connect to database." );
+        if ( !dataSource.initialize( databaseConfiguration ) ) {
+            getLogger().warning( "Could not initialize data source." );
             Bukkit.getPluginManager().disablePlugin( this );
             return;
         }
-        getLogger().info( "Successfully connected to database." );
+        getLogger().info( "Successfully initialized data source." );
 
         // Setup bank
-        bankDAO = new SQLBankDAO( database );
+        bankDAO = new SQLBankDAO( dataSource );
         bank = new Bank( bankDAO );
-        boolean success = bankDAO.setup();
-        if ( success ) {
+        boolean bankSuccess = bankDAO.setup();
+        if ( bankSuccess ) {
             getLogger().info( "Set up the bank." );
         }
 
         getCommand( "bank" ).setExecutor( new BankCommand() );
+
+        // Setup market
+        marketDAO = new SQLMarketDAO( dataSource );
+        boolean marketSuccess = marketDAO.setup();
+        if ( marketSuccess ) {
+            getLogger().info( "Set up the market." );
+        }
+
+        for ( int i = 0; i < 217; i++ ) { // todo
+            Material material = Material.values()[rdm( 0, Material.values().length )];
+            if ( !material.isItem() ) {
+                continue;
+            }
+            // marketDAO.createOffer( UUID.randomUUID(), rdm( 1, 64 ), rdm( 1, 70 ) * 50L, new ItemStack( material ) );
+        }
+
+        getCommand( "market" ).setExecutor( new MarketCommand() );
+    }
+
+    private int rdm( int from, int to ) { // todo
+        Random random = new Random();
+        return random.nextInt( to - from ) + from;
     }
 
     @Override
     public void onDisable() {
-        if ( database != null ) {
-            database.disconnect();
-        }
-
         getLogger().info( "Plugin disabled." );
     }
 
@@ -77,5 +99,9 @@ public class Plugin extends JavaPlugin {
 
     public BankDAO getBankDAO() {
         return bankDAO;
+    }
+
+    public MarketDAO getMarketDAO() {
+        return marketDAO;
     }
 }

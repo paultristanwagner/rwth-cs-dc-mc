@@ -12,6 +12,9 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>
  * @version 1.0
@@ -23,6 +26,7 @@ public abstract class InventoryGUI implements Listener {
 
     /**
      * Specifies the inventory that should be used.
+     *
      * @return the inventory
      */
     protected abstract Inventory createInventory();
@@ -32,7 +36,7 @@ public abstract class InventoryGUI implements Listener {
      */
     protected abstract void fillInventory();
 
-    private void registerListener() {
+    protected void registerListener() {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents( this, Plugin.getInstance() );
     }
@@ -43,6 +47,7 @@ public abstract class InventoryGUI implements Listener {
 
     /**
      * Opens the GUI for a specific player
+     *
      * @param player the player
      */
     public void open( Player player ) {
@@ -57,18 +62,25 @@ public abstract class InventoryGUI implements Listener {
 
     /**
      * Click even that gets called whenever the player interacts with the GUI
+     *
      * @param event the event
      */
-    @EventHandler
     public void onClick( InventoryClickEvent event ) {
 
     }
 
+    @EventHandler
+    public final void onClickInternal( InventoryClickEvent event ) {
+        if ( event.getInventory().equals( inventory ) ) {
+            onClick( event );
+        }
+    }
+
     /**
      * Close event that gets called whenever the player closes the inventory
+     *
      * @param event the event
      */
-    @EventHandler
     public void onClose( InventoryCloseEvent event ) {
 
     }
@@ -76,6 +88,7 @@ public abstract class InventoryGUI implements Listener {
     @EventHandler( priority = EventPriority.HIGHEST, ignoreCancelled = false )
     public final void onCloseInternal( InventoryCloseEvent event ) {
         if ( event.getInventory().equals( inventory ) ) {
+            onClose( event );
             unregisterListener();
         }
     }

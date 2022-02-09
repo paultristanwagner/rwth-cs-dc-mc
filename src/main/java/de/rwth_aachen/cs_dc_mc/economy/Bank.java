@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>
@@ -22,23 +24,33 @@ public class Bank {
     }
 
     public void tryCreateAccount( Player player ) {
-        bankDAO.createBankAccount( player.getUniqueId() ).thenAccept( success -> {
-            if ( !success ) {
-                player.sendMessage( "§cCould not set up bank account" );
-            }
-        } );
+        UUID uuid = player.getUniqueId();
+        CompletableFuture.supplyAsync(
+                () -> bankDAO.createBankAccount( uuid )
+        ).thenAccept(
+                success -> {
+                    if ( !success ) {
+                        player.sendMessage( "§cCould not create bank account" );
+                    }
+                }
+        );
     }
 
     public void tryRetrieveBalance( Player player ) {
-        bankDAO.getBankAccount( player.getUniqueId() ).thenAccept( account -> {
-            if ( account == null ) {
-                player.sendMessage( "§cCould not retrieve balance" );
-            } else {
-                long whole = account.cents() / 100;
-                long parts = account.cents() % 100;
-                player.sendMessage( String.format( "§aBalance§7: §6%d.%02d %c", whole, parts, CURRENCY_SYMBOL ) );
-            }
-        } );
+        UUID uuid = player.getUniqueId();
+        CompletableFuture.supplyAsync(
+                () -> bankDAO.getBankAccount( uuid )
+        ).thenAccept(
+                bankAccount -> {
+                    if ( bankAccount == null ) {
+                        player.sendMessage( "§cCould not retrieve balance" );
+                    } else {
+                        long whole = bankAccount.cents() / 100;
+                        long parts = bankAccount.cents() % 100;
+                        player.sendMessage( String.format( "§aBalance§7: §6%d.%02d %c", whole, parts, CURRENCY_SYMBOL ) );
+                    }
+                }
+        );
     }
 
     public void tryDeposit( Player player, int euros ) {
@@ -55,15 +67,19 @@ public class Bank {
 
         player.sendMessage( String.format( "§7Initiating deposit of %d.00 %c", euros, CURRENCY_SYMBOL ) );
 
-        bankDAO.deposit( player.getUniqueId(), euros * 100L )
-                .thenAccept( success -> {
+        UUID uuid = player.getUniqueId();
+        CompletableFuture.supplyAsync(
+                () -> bankDAO.deposit( uuid, euros * 100L )
+        ).thenAccept(
+                success -> {
                     if ( success ) {
                         player.sendMessage( "§aDeposit successful" );
                     } else {
                         player.sendMessage( "§cDeposit unsuccessful" );
                         player.getInventory().addItem( new ItemStack( CURRENCY_MATERIAL, euros ) );
                     }
-                } );
+                }
+        );
     }
 
     public void tryWithdraw( Player player, int euros ) {
@@ -72,30 +88,34 @@ public class Bank {
             return;
         }
 
-        bankDAO.getBankAccount( player.getUniqueId() )
-                .thenApply( account -> {
-                    if ( account == null ) {
+        UUID uuid = player.getUniqueId();
+        CompletableFuture.supplyAsync(
+                () -> bankDAO.getBankAccount( uuid )
+        ).thenAccept(
+                bankAccount -> {
+                    if ( bankAccount == null ) {
                         player.sendMessage( "§cCould not retrieve balance." );
                         throw new RuntimeException();
                     }
-                    return account;
-                } )
-                .thenAccept( account -> {
-                    long availableEuros = account.cents() / 100;
+
+                    long availableEuros = bankAccount.cents() / 100;
                     if ( euros > availableEuros ) {
                         player.sendMessage( "§cNot enough balance." );
                         throw new RuntimeException();
                     }
-                } )
-                .thenCompose( v -> bankDAO.withdraw( player.getUniqueId(), euros * 100L ) )
-                .thenAccept( success -> {
+                }
+        ).thenApplyAsync(
+                v -> bankDAO.withdraw( player.getUniqueId(), euros * 100L )
+        ).thenAccept(
+                success -> {
                     if ( success ) {
                         player.getInventory().addItem( new ItemStack( CURRENCY_MATERIAL, euros ) );
                         player.sendMessage( "§aWithdraw successful." );
                     } else {
                         player.sendMessage( "§cWithdraw unsuccessful." );
                     }
-                } );
+                }
+        );
     }
 
     private boolean tryRemoveItems( Player player, Material material, long number ) {
