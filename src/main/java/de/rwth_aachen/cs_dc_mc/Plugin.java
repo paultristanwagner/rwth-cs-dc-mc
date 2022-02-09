@@ -2,9 +2,7 @@ package de.rwth_aachen.cs_dc_mc;
 
 import de.rwth_aachen.cs_dc_mc.command.BankCommand;
 import de.rwth_aachen.cs_dc_mc.command.MarketCommand;
-import de.rwth_aachen.cs_dc_mc.database.DatabaseConfiguration;
-import de.rwth_aachen.cs_dc_mc.database.SQLDataSource;
-import de.rwth_aachen.cs_dc_mc.database.SQLiteDataSource;
+import de.rwth_aachen.cs_dc_mc.database.*;
 import de.rwth_aachen.cs_dc_mc.economy.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

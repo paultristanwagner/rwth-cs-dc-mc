@@ -80,8 +80,10 @@ public class AcceptOfferGUI extends InventoryGUI {
             player.closeInventory();
         } else if ( slot == DECREASE_SLOT ) {
             amount--;
+            displayAmount();
         } else if ( slot == INCREASE_SLOT ) {
             amount++;
+            displayAmount();
         }
     }
 
