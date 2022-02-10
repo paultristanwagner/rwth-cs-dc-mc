@@ -79,7 +79,7 @@ public class AcceptOfferGUI extends InventoryGUI {
         } else if ( slot == CANCEL_SLOT ) {
             player.closeInventory();
         } else if ( slot == DECREASE_SLOT ) {
-            amount--;
+            amount = Math.max( amount - 1, 0 );
             displayAmount();
         } else if ( slot == INCREASE_SLOT ) {
             amount++;
@@ -111,7 +111,7 @@ public class AcceptOfferGUI extends InventoryGUI {
                         player.getInventory().addItem( item );
                         long whole = payment / 100;
                         long parts = payment % 100;
-                        player.sendMessage( String.format( "§aSuccess§7: §7Bought §e%dx §7for a total of §b%d.%02d §e€", amount, whole, parts) );
+                        player.sendMessage( String.format( "§aSuccess§7: §7Bought §e%dx §7for a total of §b%d.%02d §e€", amount, whole, parts ) );
                     } else {
                         player.sendMessage( "§cCould not accept offer." );
                     }

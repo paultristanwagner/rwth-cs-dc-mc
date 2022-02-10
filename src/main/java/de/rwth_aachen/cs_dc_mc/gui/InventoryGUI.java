@@ -12,9 +12,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>
  * @version 1.0

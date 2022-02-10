@@ -1,14 +1,10 @@
 package de.rwth_aachen.cs_dc_mc.command;
 
 import de.rwth_aachen.cs_dc_mc.Plugin;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>

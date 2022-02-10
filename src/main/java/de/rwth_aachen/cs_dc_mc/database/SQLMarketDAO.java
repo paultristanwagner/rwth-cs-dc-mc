@@ -2,7 +2,6 @@ package de.rwth_aachen.cs_dc_mc.database;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import de.rwth_aachen.cs_dc_mc.database.SQLDataSource;
 import de.rwth_aachen.cs_dc_mc.economy.MarketDAO;
 import de.rwth_aachen.cs_dc_mc.economy.Offer;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +10,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>

@@ -1,6 +1,5 @@
 package de.rwth_aachen.cs_dc_mc.database;
 
-import de.rwth_aachen.cs_dc_mc.database.SQLDataSource;
 import de.rwth_aachen.cs_dc_mc.economy.BankAccount;
 import de.rwth_aachen.cs_dc_mc.economy.BankDAO;
 

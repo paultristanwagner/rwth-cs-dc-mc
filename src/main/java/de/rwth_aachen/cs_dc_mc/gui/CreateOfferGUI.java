@@ -4,10 +4,8 @@ import de.rwth_aachen.cs_dc_mc.Plugin;
 import de.rwth_aachen.cs_dc_mc.util.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,6 +35,8 @@ public class CreateOfferGUI extends InventoryGUI {
     private static final ItemStack DECREASE_PRICE = ItemBuilder.of( Material.OAK_BUTTON ).name( "§e-0.10 €" ).build();
 
     protected long price = 100;
+
+    protected boolean confirmed = false;
 
     @Override
     protected Inventory createInventory() {
@@ -75,10 +75,8 @@ public class CreateOfferGUI extends InventoryGUI {
             event.setCancelled( true );
 
             if ( slot == CONFIRM_SLOT ) {
-                // todo confirm
                 confirm();
             } else if ( slot == CANCEL_SLOT ) {
-                // todo cancel
                 player.closeInventory();
             } else if ( slot == DECREASE_PRICE_SLOT ) {
                 price = Math.max( price - 10, 0 );
@@ -91,7 +89,19 @@ public class CreateOfferGUI extends InventoryGUI {
         }
     }
 
+    @Override
+    public void onClose( InventoryCloseEvent event ) {
+        if ( !confirmed ) {
+            ItemStack item = inventory.getItem( INPUT_SLOT );
+            if ( item != null ) {
+                player.getInventory().addItem( item );
+            }
+        }
+    }
+
     protected void confirm() {
+        confirmed = true;
+
         ItemStack offeredItem = inventory.getItem( INPUT_SLOT );
         if ( offeredItem != null ) {
             int amount = offeredItem.getAmount();

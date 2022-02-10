@@ -17,6 +17,7 @@ public abstract class LoadingGUI<T> extends InventoryGUI {
 
     protected T t;
 
+    @Override
     public void open( Player player ) {
         this.player = player;
         inventory = createInventory();
