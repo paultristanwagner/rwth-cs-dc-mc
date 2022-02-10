@@ -8,10 +8,12 @@ import de.rwth_aachen.cs_dc_mc.economy.BankDAO;
 import de.rwth_aachen.cs_dc_mc.economy.MarketDAO;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * @author Paul Tristan Wagner <paultristanwagner@gmail.com>
@@ -68,25 +70,44 @@ public class Plugin extends JavaPlugin {
             getLogger().info( "Set up the market." );
         }
 
-        for ( int i = 0; i < 217; i++ ) { // todo
-            Material material = Material.values()[rdm( 0, Material.values().length )];
-            if ( !material.isItem() ) {
-                continue;
-            }
-            // marketDAO.createOffer( UUID.randomUUID(), rdm( 1, 64 ), rdm( 1, 70 ) * 50L, new ItemStack( material ) );
-        }
+        // todo for testing
+        // createMockupMarket();
 
         getCommand( "market" ).setExecutor( new MarketCommand() );
-    }
-
-    private int rdm( int from, int to ) { // todo
-        Random random = new Random();
-        return random.nextInt( to - from ) + from;
     }
 
     @Override
     public void onDisable() {
         getLogger().info( "Plugin disabled." );
+    }
+
+    /**
+     * Creates a random integer in the interval between from a inclusive and b inclusive
+     * <p>
+     * todo remove
+     *
+     * @param a lower bound
+     * @param b upper bound
+     * @return the random integer
+     */
+    private int rdm( int a, int b ) {
+        Random random = new Random();
+        return random.nextInt( b - a ) + a;
+    }
+
+    /**
+     * Create a market containing mockup offers
+     * <p>
+     * todo remove
+     */
+    private void createMockupMarket() {
+        for ( int i = 0; i < 217; i++ ) {
+            Material material = Material.values()[rdm( 0, Material.values().length )];
+            if ( !material.isItem() ) {
+                continue;
+            }
+            marketDAO.createOffer( UUID.randomUUID(), rdm( 1, 64 ), rdm( 1, 70 ) * 50L, new ItemStack( material ) );
+        }
     }
 
     public static Plugin getInstance() {
