@@ -80,12 +80,11 @@ public class CreateOfferGUI extends InventoryGUI {
                 player.closeInventory();
             } else if ( slot == DECREASE_PRICE_SLOT ) {
                 price = Math.max( price - 10, 0 );
-                displayPrice();
+                Bukkit.getScheduler().runTask( Plugin.getInstance(), this::displayPrice);
             } else if ( slot == INCREASE_PRICE_SLOT ) {
                 price += 10;
-                displayPrice();
+                Bukkit.getScheduler().runTask( Plugin.getInstance(), this::displayPrice);
             }
-
         }
     }
 
