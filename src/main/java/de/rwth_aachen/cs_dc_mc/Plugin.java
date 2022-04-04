@@ -6,6 +6,7 @@ import de.rwth_aachen.cs_dc_mc.database.*;
 import de.rwth_aachen.cs_dc_mc.economy.Bank;
 import de.rwth_aachen.cs_dc_mc.economy.BankDAO;
 import de.rwth_aachen.cs_dc_mc.economy.MarketDAO;
+import de.rwth_aachen.cs_dc_mc.gui.InventoryGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -78,13 +79,15 @@ public class Plugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        InventoryGUI.closeAll();
+        
         getLogger().info( "Plugin disabled." );
     }
 
     /**
      * Creates a random integer in the interval between from a inclusive and b inclusive
      * <p>
-     * todo remove
+     * todo: remove
      *
      * @param a lower bound
      * @param b upper bound
@@ -98,7 +101,7 @@ public class Plugin extends JavaPlugin {
     /**
      * Create a market containing mockup offers
      * <p>
-     * todo remove
+     * todo: remove
      */
     private void createMockupMarket() {
         for ( int i = 0; i < 217; i++ ) {

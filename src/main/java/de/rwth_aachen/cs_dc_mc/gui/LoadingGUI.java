@@ -1,6 +1,8 @@
 package de.rwth_aachen.cs_dc_mc.gui;
 
+import de.rwth_aachen.cs_dc_mc.Plugin;
 import de.rwth_aachen.cs_dc_mc.util.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,10 +35,12 @@ public abstract class LoadingGUI<T> extends InventoryGUI {
         ).thenAccept(
                 this::doneLoading
         );
-
-        player.openInventory( inventory );
-
-        registerListener();
+    
+        register();
+        
+        Bukkit.getScheduler().runTask( Plugin.getInstance(),
+                () -> player.openInventory( inventory )
+        );
     }
 
     @Override

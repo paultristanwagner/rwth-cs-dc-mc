@@ -126,7 +126,6 @@ public class SQLMarketDAO implements MarketDAO {
             PreparedStatement increaseBalance = con.prepareStatement( "UPDATE bankAccount SET cents = cents + ? WHERE uuid = ?;" );
 
             long payment = amount * offer.price();
-            System.out.println( "payment: " + payment );
             decreaseBalance.setLong( 1, payment );
             decreaseBalance.setString( 2, buyerId.toString() );
             increaseBalance.setLong( 1, payment );

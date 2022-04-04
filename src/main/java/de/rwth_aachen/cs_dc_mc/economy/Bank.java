@@ -13,16 +13,16 @@ import java.util.concurrent.CompletableFuture;
  * @version 1.0
  */
 public class Bank {
-
+    
     public static final Material CURRENCY_MATERIAL = Material.DIAMOND;
     public static final char CURRENCY_SYMBOL = '€';
-
+    
     protected final BankDAO bankDAO;
-
+    
     public Bank( BankDAO bankDAO ) {
         this.bankDAO = bankDAO;
     }
-
+    
     public void tryCreateAccount( Player player ) {
         UUID uuid = player.getUniqueId();
         CompletableFuture.supplyAsync(
@@ -35,7 +35,7 @@ public class Bank {
                 }
         );
     }
-
+    
     public void tryRetrieveBalance( Player player ) {
         UUID uuid = player.getUniqueId();
         CompletableFuture.supplyAsync(
@@ -52,21 +52,21 @@ public class Bank {
                 }
         );
     }
-
+    
     public void tryDeposit( Player player, int euros ) {
         if ( euros <= 0 ) {
             player.sendMessage( "§cNumber must be positive." );
             return;
         }
-
+        
         boolean enoughItems = tryRemoveItems( player, CURRENCY_MATERIAL, euros );
         if ( !enoughItems ) {
             player.sendMessage( "§cYou dont have enough items to deposit!" );
             return;
         }
-
+        
         player.sendMessage( String.format( "§7Initiating deposit of %d.00 %c", euros, CURRENCY_SYMBOL ) );
-
+        
         UUID uuid = player.getUniqueId();
         CompletableFuture.supplyAsync(
                 () -> bankDAO.deposit( uuid, euros * 100L )
@@ -81,13 +81,13 @@ public class Bank {
                 }
         );
     }
-
+    
     public void tryWithdraw( Player player, int euros ) {
         if ( euros <= 0 ) {
             player.sendMessage( "§cNumber must be positive." );
             return;
         }
-
+        
         UUID uuid = player.getUniqueId();
         CompletableFuture.supplyAsync(
                 () -> bankDAO.getBankAccount( uuid )
@@ -97,7 +97,7 @@ public class Bank {
                         player.sendMessage( "§cCould not retrieve balance." );
                         throw new RuntimeException();
                     }
-
+                    
                     long availableEuros = bankAccount.cents() / 100;
                     if ( euros > availableEuros ) {
                         player.sendMessage( "§cNot enough balance." );
@@ -117,7 +117,7 @@ public class Bank {
                 }
         );
     }
-
+    
     private boolean tryRemoveItems( Player player, Material material, long number ) {
         Map<Integer, ? extends ItemStack> map = player.getInventory().all( material );
         int sum = 0;
@@ -126,16 +126,16 @@ public class Bank {
                 sum += entry.getValue().getAmount();
             }
         }
-
+        
         if ( sum < number ) {
             return false;
         }
-
+        
         for ( Map.Entry<Integer, ? extends ItemStack> entry : map.entrySet() ) {
             if ( number == 0 ) {
                 break;
             }
-
+            
             if ( entry.getValue().getAmount() != 0 ) {
                 if ( entry.getValue().getAmount() == 1 ) {
                     player.getInventory().setItem( entry.getKey(), null );
